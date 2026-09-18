@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أكاديمية المستقبل التكنولوجية والهندسية</title>
+    <!-- استدعاء خط Cairo وأيقونات FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            --accent-color: #2563eb;
+            --accent-hover: #1d4ed8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --radius: 16px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- شاشة الترحيب (Welcome Loader) --- */
+        #welcome-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        #welcome-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+            animation: bounceIn 1.2s ease-in-out;
+        }
+
+        .loader-content i {
+            font-size: 4rem;
+            color: #38bdf8;
+            margin-bottom: 20px;
+            animation: pulseGlow 2s infinite;
+        }
+
+        .loader-content h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .loader-content p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Nav Header */
+        header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+        }
+
+        nav button:hover, nav button.active {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Sections */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Hero Banner */
+        .hero {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: var(--radius);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; font-weight: 800; }
+        .hero p { font-size: 1.2rem; color: #cbd5e1; max-width: 700px; margin: 0 auto 1.5rem; }
+        
+        .hero-btn {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .hero-btn:hover { background: #16a34a; transform: scale(1.05); }
+
+        /* Section Titles */
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background: var(--accent-color);
+            display: block;
+            margin: 8px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Cards Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img-wrapper {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-img-wrapper img { transform: scale(1.08); }
+
+        .card-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-content h3 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text-main); }
+        .card-content p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 1rem; }
+
+        .benefit-box {
+            background: #f0f9ff;
+            border-right: 4px solid var(--accent-color);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            margin-bottom: 1rem;
+            color: #0369a1;
+        }
+
+        .req-pills {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            margin-bottom: 1rem;
+        }
+
+        .pill {
+            background: #f1f5f9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .btn-card {
+            width: 100%;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-card:hover { background: var(--accent-hover); }
+
+        /* Form Styling */
+        form {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 700; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        /* تنسيقات تذييل الصفحة (Footer) وأيقونات التواصل */
+        .site-footer {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 2.5rem 1rem 1.5rem;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 4px solid #2563eb;
+        }
+
+        .footer-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .footer-content p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .social-icon {
+            display: inline-block;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            padding: 8px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .social-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-8px) scale(1.15);
+            background: #2563eb;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.2rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .footer-bottom span {
+            color: #38bdf8;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة الترحيب -->
+    <div id="welcome-loader">
+        <div class="loader-content">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <h1>أهلاً بك في أكاديمية المستقبل</h1>
+            <p>جاري تحضير النظام الأكاديمي...</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo"><i class="fa-solid fa-graduation-cap"></i> أكاديمية المستقبل</div>
+        <nav>
+            <button onclick="showSection('home')" class="active"><i class="fa-solid fa-house"></i> الرئيسية</button>
+            <button onclick="showSection('categories')"><i class="fa-solid fa-layer-group"></i> الأقسام والأدلة</button>
+            <button onclick="showSection('teachers')"><i class="fa-solid fa-chalkboard-user"></i> الكادر التعليمي</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <!-- الواجهة الرئيسية -->
+        <div id="home" class="page-section active">
+            <div class="hero">
+                <img src="Rrrr.png" alt="صورة الواجهة" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;">
+                <h1>مرحباً بك في البوابة الأكاديمية الرسمية</h1>
+                <p>اختر مسارك التعليمي وانضم إلى أفضل البرامج المعتمدة في المجالات الطبية، التقنية، والهندسية.</p>
+                <button class="hero-btn" onclick="showSection('categories')">استكشف جميع الأقسام والتخصصات</button>
+            </div>
+
+            <h2 class="section-title">مميزات الدراسة بالأكاديمية</h2>
+            <div class="grid">
+                <div class="card" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-certificate" style="font-size: 2.5rem; color: var(--accent-color); margin-bottom: 10px;"></i>
+                    <h3>شهادات معتمدة</h3>
+                    <p>برامج تعليمية مواكبة لمتطلبات سوق العمل المحلي والدولي.</p>
+                </div>
+                <div class="card" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-flask" style="font-size: 2.5rem; color: #22c55e; margin-bottom: 10px;"></i>
+                    <h3>معامل حديثة</h3>
+                    <p>تطبيق عملي مباشر في أفضل المعامل والمختبرات المجهزة.</p>
+                </div>
+                <div class="card" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-user-tie" style="font-size: 2.5rem; color: #eab308; margin-bottom: 10px;"></i>
+                    <h3>كادر متميز</h3>
+                    <p>نخبة من الأطباء والمهندسين والخبراء الأكاديميين.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- واجهة الأقسام الرئيسية -->
+        <div id="categories" class="page-section">
+            <h2 class="section-title">الأقسام الكلية المتاحة</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-img-wrapper"><img src="Sssss.jpg" alt="القسم الطبي"></div>
+                    <div class="card-content">
+                        <h3>الأقسام الطبية والصحية</h3>
+                        <p>تضم تخصصات تمريض، صيدلة، طب أسنان، وقبالة مع تدريب ميداني مكثف.</p>
+                        <button class="btn-card" onclick="openMajors('medical')">عرض تخصصات هذا القسم</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-img-wrapper"><img src="Bi.jpg" alt="القسم التقني"></div>
+                    <div class="card-content">
+                        <h3>الذكاء الاصطناعي وإدارة الأعمال</h3>
+                        <p>تضم تخصصات ذكاء الأعمال، تقنية المعلومات، المحاسبة، وإدارة الأعمال.</p>
+                        <button class="btn-card" onclick="openMajors('tech')">عرض تخصصات هذا القسم</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-img-wrapper"><img src="qqqqq.jpg" alt="القسم الهندسي"></div>
+                    <div class="card-content">
+                        <h3>الهندسة والتصاميم</h3>
+                        <p>تضم تخصصات المساحة والتخطيط، تصميم الديكور الداخلي، والتصميم الجرافيكي.</p>
+                        <button class="btn-card" onclick="openMajors('engineering')">عرض تخصصات هذا القسم</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- واجهة التخصصات التفصيلية -->
+        <div id="majors" class="page-section">
+            <button class="back-btn" onclick="showSection('categories')"><i class="fa-solid fa-arrow-right"></i> العودة للأقسام</button>
+            <h2 class="section-title" id="majors-title">التخصصات المتاحة</h2>
+            <div class="grid" id="majors-grid"></div>
+        </div>
+
+        <!-- واجهة التسجيل -->
+        <div id="register" class="page-section">
+            <button class="back-btn" onclick="showSection('majors')"><i class="fa-solid fa-arrow-right"></i> العودة لتفاصيل التخصصات</button>
+            <h2 class="section-title">استمارة الالتحاق الأكاديمي</h2>
+            <form id="regForm" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST" onsubmit="return validateFullName(event)">
+                <div class="form-group">
+                    <label>التخصص المختار:</label>
+                    <input type="text" id="selectedMajor" name="التخصص" readonly style="background:#f1f5f9; font-weight:bold;">
+                </div>
+                <div class="form-group">
+                    <label>الاسم الرباعي للطالب:</label>
+                    <input type="text" id="fullName" name="الاسم_الرباعي" required placeholder="أدخل اسمك الرباعي كاملاً">
+                </div>
+                <div class="form-group">
+                    <label>العمر:</label>
+                    <input type="number" name="العمر" required placeholder="مثال: 20">
+                </div>
+                <div class="form-group">
+                    <label>معدل شهادة الثانوية العامة (%):</label>
+                    <input type="number" step="0.1" name="المعدل" required placeholder="مثال: 85.5">
+                </div>
+                <div class="form-group">
+                    <label>طريقة دفع الرسوم المفضلة:</label>
+                    <select name="طريقة_الدفع">
+                        <option value="حوالة بنكية">حوالة بنكية عبر التطبيقات المعتمدة</option>
+                        <option value="محفظة إلكترونية">محفظة إلكترونية</option>
+                        <option value="دفع مباشر">دفع نقدي في شباك التسجيل بالأكاديمية</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-card" style="padding: 14px; font-size: 1.1rem; background: #22c55e;">تأكيد وإرسال طلب الالتحاق</button>
+            </form>
+        </div>
+
+        <!-- واجهة المعلمين -->
+        <div id="teachers" class="page-section">
+            <h2 class="section-title">أعضاء الهيئة التدريسية</h2>
+            <div class="grid">
+                <div class="card" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-user-doctor" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 10px;"></i>
+                    <h3>د. محمد العبسي</h3>
+                    <p>استشاري وأستاذ العلوم الطبية والصيدلانية</p>
+                </div>
+                <div class="card" style="padding: 1.5rem; text-align: center;">
+                    <i class="fa-solid fa-laptop-code" style="font-size: 3rem; color: #22c55e; margin-bottom: 10px;"></i>
+                    <h3>م. علي الشامي</h3>
+                    <p>خبير الذكاء الاصطناعي وأنظمة ذكاء الأعمال BI</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // إخفاء شاشة الترحيب تلقائياً بعد التحميل
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('welcome-loader').classList.add('hidden');
+            }, 1500);
+        });
+
+        const data = {
+            medical: {
+                title: "التخصصات الطبية والصحية",
+                list: [
+                    { name: "تمريض عام", age: "18 - 25 سنة", grade: "75%", benefit: "فوائد التخصص: الطلب المرتفع في المستشفيات والقدرة على إنقاذ الأرواح وإعادة التأهيل الصحي.", img: "تمريض.jpg " },
+                    { name: "صيدلة طوارئ وعلاج", age: "18 - 23 سنة", grade: "85%", benefit: "فوائد التخصص: فهم التركيبات الدوائية، وإدارة المنشآت الصيدلانية ومصانع الأدوية.", img: "صيدله.jpg" },
+                    { name: "طب وجراحة الأسنان", age: "18 - 22 سنة", grade: "90%", benefit: "فوائد التخصص: فتح العيادات الخاصة والتخصص في تجميل وجراحة الفم والأسنان.", img: "طب.jpg" },
+                    { name: "قبالة ورعاية أمومة", age: "18 - 25 سنة", grade: "70%", benefit: "فوائد التخصص: التخصص الحيوي في رعاية صحة الأم والطفل والولادة الآمنة.", img: "قباله.jpg" }
+                ]
+            },
+            tech: {
+                title: "التخصصات التقنية وإدارة الأعمال",
+                list: [
+                    { name: "ذكاء الأعمال (BI)", age: "18 - 28 سنة", grade: "75%", benefit: "فوائد التخصص: تحويل البيانات لقرارات استراتيجية للشركات، وهو التخصص الأكثر طلباً في سوق العمل المستقبلي.", img: "ذكاء الاعمال.jpg"},
+                    { name: "تقنية المعلومات IT", age: "18 - 28 سنة", grade: "70%", benefit: "فوائد التخصص: إتقان إدارة الشبكات، البرمجة، حماية البيانات والأمن السيبراني.", img: "تقنيه.jpg" },
+                    { name: "إدارة أعمال ومشاريع", age: "18 - 30 سنة", grade: "65%", benefit: "فوائد التخصص: بناء مهارات القيادة، إدارة الشركات، والريادة في تأسيس المشاريع الخاصة.", img: "/أدارة أعمال.jpg" },
+                    { name: "محاسبة مالية ومصرفية", age: "18 - 30 سنة", grade: "65%", benefit: "فوائد التخصص: ضبط الحسابات المالية، التحليل المالي للشركات والمؤسسات المصرفية.", img: "/محاسبه.jpg" }
+                ]
+            },
+            engineering: {
+                title: "التخصصات الهندسية والتصاميم",
+                list: [
+                    { name: "مساحة وتخطيط طرق", age: "18 - 26 سنة", grade: "75%", benefit: "فوائد التخصص: العمل الميداني في تخطيط المدن، الطرقات، والمشاريع الإنكشائية الكبرى.", img: "مساحه.png" },
+                    { name: "تصميم ديكور داخلي", age: "18 - 28 سنة", grade: "70%", benefit: "فوائد التخصص: تحويل المساحات لقطع فنية معمارية وإدارة مشاريع التشطيبات.", img: "/ديكور.jpg" },
+                    { name: "تصميم جرافيكس ومونتاج", age: "18 - 30 سنة", grade: "60%", benefit: "فوائد التخصص: احتراف العمل الحر (Freelancing)، صناعة الهويات البصرية، والإعلانات.", img: "/جرافيكس.jpg" }
+                ]
+            }
+        };
+
+        function showSection(id) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function openMajors(key) {
+            const cat = data[key];
+            document.getElementById('majors-title').innerText = cat.title;
+            const grid = document.getElementById('majors-grid');
+            grid.innerHTML = '';
+
+            cat.list.forEach(item => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <div class="card-img-wrapper"><img src="${item.img}" alt="${item.name}"></div>
+                        <div class="card-content">
+                            <h3>${item.name}</h3>
+                            <div class="benefit-box">${item.benefit}</div>
+                            <div class="req-pills">
+                                <span class="pill"><i class="fa-solid fa-user"></i> ${item.age}</span>
+                                <span class="pill"><i class="fa-solid fa-chart-line"></i> أدنى معدل: ${item.grade}</span>
+                            </div>
+                            <button class="btn-card" onclick="openRegister('${item.name}')">التسجيل في التخصص</button>
+                        </div>
+                    </div>
+                `;
+            });
+            showSection('majors');
+        }
+
+        function openRegister(name) {
+            document.getElementById('selectedMajor').value = name;
+            showSection('register');
+        }
+
+        // --- دالة التحقق من الاسم الرباعي ---
+        function validateFullName(event) {
+            const fullNameInput = document.getElementById('fullName').value.trim();
+            const words = fullNameInput.split(/\s+/);
+
+            if (words.length < 4) {
+                alert('عذراً، يجب إدخال الاسم الرباعي كاملاً (4 أسماء على الأقل) لكي يتم قبول التسجيل!');
+                event.preventDefault(); // منع الإرسال
+                return false;
+            }
+            return true; // السماح بالإرسال إذا كان رباعياً
+        }
+    </script>
+
+    <!-- قسم تواصل معنا وحقوق المطور -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <h3>تواصل معنا عبر منصاتنا</h3>
+            <p>نحن هنا للإجابة على استفساراتكم ومساعدتكم طوال الوقت</p>
+            
+            <!-- أيقونات التواصل الاجتماعي -->
+            <div class="social-icons">
+                <!-- رابط واتساب -->
+                <a href="https://wa.me/رقمك_هنا" target="_blank" class="social-icon whatsapp" title="واتساب">
+                    <img src="W.png" alt="واتساب">
+                </a>
+                <!-- رابط فيسبوك -->
+                <a href="رابط_فيسبوك_هنا" target="_blank" class="social-icon facebook" title="فيسبوك">
+                    <img src="F.png" alt="فيسبوك">
+                </a>
+                <!-- رابط انستغرام -->
+                <a href="رابط_انستغرام_هنا" target="_blank" class="social-icon instagram" title="انستغرام">
+                    <img src="I.png" alt="انستغرام">
+                </a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>جميع الحقوق محفوظة &copy; 2026 | تصميم وتطوير المطور <span>أمجد الحدائي</span></p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
